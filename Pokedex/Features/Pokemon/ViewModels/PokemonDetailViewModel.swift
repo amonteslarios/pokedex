@@ -6,7 +6,8 @@
 //
 import Foundation
 import Combine
-
+/// Combinie `PokemonDetail` y `PokemonSpecies` para mostrar datos enriquecidos.
+/// - Note: Agrupa formato de campos (altura, peso, tipos) para que la vista sea “tonta”.
 @MainActor
 final class PokemonDetailViewModel: ObservableObject {
     @Published var title: String

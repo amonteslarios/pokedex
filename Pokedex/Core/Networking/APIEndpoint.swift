@@ -10,7 +10,9 @@ protocol APIEndpoint {
     associatedtype Response: Decodable    
     var baseURL: URL { get }
     var path: String { get }
+    /// Método HTTP a usar.
     var method: HTTPMethod { get }
+    /// Parámetros de query opcionales.
     var queryItems: [URLQueryItem] { get }
     var headers: [String: String] { get }
     var body: Data? { get }
