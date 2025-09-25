@@ -40,13 +40,12 @@ struct PokedexView: View {
                 .refreshable { vm.refresh() }
                 if vm.isLoading && vm.items.isEmpty {
                     LoadingOverlay(text: "Cargando Pokémon…")
-                }            
+                    .zIndex(1)
+                }
                 
                 if let msg = vm.errorMessage, vm.items.isEmpty {
-                    ErrorStateView(
-                        title: "No se pudo cargar la lista",
+                    ErrorView(
                         message: msg,
-                        retryTitle: "Reintentar",
                         onRetry: { vm.retryLastPage() }
                     )
                 }

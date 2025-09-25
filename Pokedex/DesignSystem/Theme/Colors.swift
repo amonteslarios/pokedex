@@ -12,20 +12,6 @@ enum AppColors {
     static let background = Color("Background")
     static let textPrimary = Color("TextPrimary")
     static let textSecondary = Color("TextSecondary")
-
-    // Colores específicos para tipos de Pokémon
-    static let typeColors: [String: Color] = [
-        "fire": .red,
-        "water": .blue,
-        "grass": .green,
-        "electric": .yellow,
-        "psychic": .purple,
-        "ice": .cyan,
-        "dragon": .orange,
-        "dark": .black,
-        "fairy": .pink,
-        "normal": .gray
-    ]
 }
 
 enum Spacing {
