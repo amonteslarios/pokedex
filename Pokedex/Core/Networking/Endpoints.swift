@@ -7,8 +7,14 @@
 import Foundation
 
 enum PokemonEndpoint<Response: Decodable>: APIEndpoint {
+    /// Lista paginada de Pokémon.
+    /// - Parameters:
+    ///   - limit: Tamaño de página.
+    ///   - offset: Desplazamiento (items a omitir).
     case list(limit: Int, offset: Int)
+    /// Detalle de un Pokémon por id.
     case detail(id: Int)
+    /// Especie de un Pokémon por id.
     case species(id: Int)
 
     var baseURL: URL { URL(string: "https://pokeapi.co/api/v2")! }

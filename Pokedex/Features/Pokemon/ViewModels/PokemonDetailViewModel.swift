@@ -6,11 +6,13 @@
 //
 import Foundation
 import Combine
-
+/// Combinie `PokemonDetail` y `PokemonSpecies` para mostrar datos enriquecidos.
+/// - Note: Agrupa formato de campos (altura, peso, tipos) para que la vista sea “tonta”.
 @MainActor
 final class PokemonDetailViewModel: ObservableObject {
     @Published var title: String
     @Published var detail: PokemonDetail?
+    @Published private(set) var descriptionText: String = ""
     @Published var species: PokemonSpecies?
     @Published var imageURL: URL?
     @Published var hp: Int?
@@ -37,14 +39,13 @@ final class PokemonDetailViewModel: ObservableObject {
         guard !isLoading else { return }
           isLoading = true
           errorMessage = nil
-            service.detail(id: pokemonID)                       // <-- emite en background
+            service.detail(id: pokemonID)
               .flatMap { [weak self] detail -> AnyPublisher<(PokemonDetail, PokemonSpecies?), NetworkError> in
                   guard let self = self else {
                       return Just((detail, nil))
                           .setFailureType(to: NetworkError.self)
                           .eraseToAnyPublisher()
                   }
-                  let speciesPublisher: AnyPublisher<PokemonSpecies?, NetworkError>
                   if let speciesID = Self.extractID(from: detail.species.url) {
                       return self.service.species(id: speciesID)
                           .map { (detail, Optional($0)) }
@@ -55,7 +56,7 @@ final class PokemonDetailViewModel: ObservableObject {
                           .eraseToAnyPublisher()
                   }
               }
-              .receive(on: DispatchQueue.main)                 // <-- cambia de hilo AQUÍ
+              .receive(on: DispatchQueue.main)
               .sink { [weak self] completion in
                   guard let self = self else { return }
                   self.isLoading = false

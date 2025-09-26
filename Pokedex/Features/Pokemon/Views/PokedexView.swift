@@ -15,38 +15,41 @@ struct PokedexView: View {
         _vm = StateObject(wrappedValue: vm)
         self.detailView = detailView
     }
-
     @State private var query: String = ""
 
     var body: some View {
         NavigationView {
             ZStack {
                 List(filteredItems, id: \.id) { pokemon in
-                    NavigationLink {
-                        if let u = URL(string: pokemon.url) {
-                            detailView(u, pokemon.name)
-                        } else {
-                            Text("URL inválida")
+                    let row = PokemonRowView(pokemon: pokemon)
+                        .onAppear { vm.fetchNextPageIfNeeded(current: pokemon) }
+                        .listRowSeparator(.hidden)
+                    if let url = URL(string: pokemon.url) {
+                        NavigationLink {
+                            detailView(url, pokemon.name)
+                        } label: {
+                            row
                         }
-                    } label: {
-                        PokemonRowView(pokemon: pokemon)
-                            .onAppear { vm.fetchNextPageIfNeeded(current: pokemon) }
+                        .buttonStyle(.plain)
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                    } else {
+                        row.contentShape(Rectangle())
+                            .disabled(true)
+                            .opacity(0.6)
                     }
                 }
                 .listStyle(.plain)
                 .navigationTitle("Pokédex")
                 .searchable(text: $query, placement: .navigationBarDrawer, prompt: "Buscar Pokémon")
-                
                 .refreshable { vm.refresh() }
                 if vm.isLoading && vm.items.isEmpty {
                     LoadingOverlay(text: "Cargando Pokémon…")
-                }            
-                
+                    .zIndex(1)
+                }
                 if let msg = vm.errorMessage, vm.items.isEmpty {
-                    ErrorStateView(
-                        title: "No se pudo cargar la lista",
+                    ErrorView(
                         message: msg,
-                        retryTitle: "Reintentar",
                         onRetry: { vm.retryLastPage() }
                     )
                 }

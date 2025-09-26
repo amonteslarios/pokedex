@@ -22,10 +22,8 @@ struct PokemonDetailView: View {
                 .background(Color(.systemBackground))
             } else if let msg = vm.errorMessage, vm.imageURL == nil {
                 // Error inicial sin datos: muestra tarjeta con retry
-                ErrorStateView(
-                    title: "No se pudo cargar el detalle",
+                ErrorView(
                     message: msg,
-                    retryTitle: "Reintentar",
                     onRetry: { vm.retry() }
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

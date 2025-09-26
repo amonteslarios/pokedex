@@ -6,11 +6,12 @@
 //
 import Combine
 import Foundation
-
+/// Implementación de `PokemonAPIServiceProtocol`.
+/// Orquesta `Endpoints`, `RequestBuilder` y `HTTPClient`.
 final class PokemonAPIService: PokemonAPIServiceProtocol {
     private let client: HTTPClientProtocol
     init(client: HTTPClientProtocol = HTTPClient()) { self.client = client }
-
+    /// - SeeAlso: `Endpoints.pokemonList(limit:offset:)`
     func list(limit: Int, offset: Int) -> AnyPublisher<PokemonList, NetworkError> {
         client.request(PokemonEndpoint<PokemonList>.list(limit: limit, offset: offset))
     }

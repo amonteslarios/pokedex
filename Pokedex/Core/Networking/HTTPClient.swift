@@ -10,7 +10,6 @@ import Foundation
 protocol HTTPClientProtocol {
     func request<E: APIEndpoint>(_ endpoint: E) -> AnyPublisher<E.Response, NetworkError>
 }
-
 final class HTTPClient: HTTPClientProtocol {
     func request<E: APIEndpoint>(_ endpoint: E) -> AnyPublisher<E.Response, NetworkError> {
         var components = URLComponents(

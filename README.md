@@ -37,7 +37,7 @@ Aplicación iOS tipo Pokédex que consume la PokeAPI para listar y detallar Pok�
 - iOS 15.0+ (target sugerido)
 - Swift 5.10+
 
-## 🚀 Ejecución
+## 🚀 Instrucciones de Instalación y Ejecución
 1. Clona el repo:
    ```bash
    git clone git@github.com:amonteslarios/pokedex.git
@@ -66,3 +66,66 @@ Consulta [`CONTRIBUTING.md`](CONTRIBUTING.md) y usa nuestras plantillas de PR/Is
 
 ## 📄 Licencia
 MIT (o la que elijas) en `LICENSE`.
+
+
+##  Decisiones Arquitectónicas Justificadas: 
+
+- MVVM + SwiftUI + Combine: Separación clara entre presentación (Views) y lógica de presentación (ViewModels). Los ViewModels exponen estado reactivo vía @Published y AnyPublisher permitiendo el uso data binding. A su vez fue parte del requerimiento el uso de Models, Views y ViewModels así que la arquitectura o patron que se adaptaba a esa necesidad era MVVM
+
+- Estado unificado de la pantalla (ViewState)
+Un enum controla idle / loading / loaded / error, evitando estados inconsistentes y simplificando los flujos de UI/errores.
+
+- Inyección de dependencias
+Los ViewModels reciben PokemonAPIServiceProtocol para poder desacoplar UI de la capa conexion, habilita tests y cambios de backend sin tocar la UI.
+
+- Navegación simple
+Se usa NavigationStack (SwiftUI). La navegación no vive en el ViewModel; el ViewModel solo emite intenciones. Si la aplicación muta o crece también seria compatible con un Coordinator ligero.
+
+- Estrategia de errores y resiliencia
+Errores normalizados en el Service mostando mensajes de UI en el ViewModel.
+
+## Optimizaciones Implementadas
+
+###Paginación eficiente
+Carga por páginas 20 a 50 items en este caso nos quedamos con 50 pokemones por llamado es una constante la cual puede ser modificada. El ViewModel solicita la siguiente página cuando el usuario se aproxima al final de la lista donde se implimento que cuando ya este en los 10 ultimos este pueda hacer el llamado a la API para poder sumar más información en la lista.
+
+### Lazy Loading de imágenes
+Las imágenes se solicitan solo cuando son visibles. Se cancela/rehúsa la carga al reciclar celdas, evitando trabajo inútil al hacer scroll rápido.
+
+### Cache de imágenes en memoria
+ImageCacheService guarda bitmaps por URL para evitar redescargas de imagenes.
+
+### Trabajo pesado fuera del hilo principal
+Decodificación JSON y transformaciones se realizan en background.
+
+### Reuso de infraestructura
+Reutilización de URLSession y JSONDecoder.
+
+## Issues o Limitaciones Conocidos
+
+### Sin persistencia de datos (Guardado en memoria)
+Actualmente no se guardan datos en disco.
+Al reiniciar la app, se vuelve a consultar la APP
+
+### Imágenes de los pokemones pueden parpadear cuando uno hace scroll rápido
+Con conexiones de redes de internet lentas puede notarse un parpadeo 
+
+### Localización limitada
+No uso de Localizable.Strings dentro del proyecto
+
+###Limitaciones en la busqueda
+Cuando uno quiere buscar un pokemon que no este cargado en la lista no vera contenido (Ejm: Buscar Chikorita al momento de iniciar el app)
+Esto es debido a que la busqueda no se hace en tiempo real ya que se tienen limitaciones con la API.
+
+
+##Screenshots de la Aplicación Funcionando
+
+- Captura 1 (Muestra pantalla inicial Lista)
+
+- Captura 2 (Muestra el detalle del pokemon Bullbasaur)
+
+- Captura 3 (Muestra el detalle del pokemon Venusaur)
+
+- Captura 4 (Muestra la lista filtrada por las letras "ch")
+
+- Captura 5 (Muestra la lista hasta el pokemon 141)
