@@ -19,11 +19,7 @@ struct CachedAsyncImage: View {
             } else {
                 ProgressView()
                     .task {
-                        if #available(iOS 15.0, macOS 12.0, *) {
-                            data = await ImageCacheService.shared.loadData(from: url)
-                        } else {
-                            // Fallback a Combine si necesitas soportar iOS <15
-                        }
+                        data = await ImageCacheService.shared.loadData(from: url)
                     }
             }
         }
